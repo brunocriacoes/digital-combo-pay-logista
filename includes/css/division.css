@@ -1,0 +1,37 @@
+.grid-division {
+    display: block;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    margin-bottom: 30px;
+    background-color: #FFF;
+    max-height: 40px;
+    overflow: hidden;
+}
+.grid-division.active {
+    max-height: 1000px;
+    
+}
+.grid-division > span {
+    display: block;
+    line-height: 40px;
+    padding-left: 15px;
+}
+.grid-division > span:nth-child(2n+1) {
+    background-color: #EEE;
+}
+.btn-more-division {
+    display: inline-block;
+    cursor: pointer;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, .2);
+    font-weight: bolder;
+}
+.btn-more-division:hover {
+    background-color: #DDD !important;
+}
+.btn-more-division small {
+    background-color: #CCC;
+    color: #666;
+    border-radius: 100%;
+    padding: 3px 7px;
+    margin-left: 12px;
+}
