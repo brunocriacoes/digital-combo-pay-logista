@@ -2,7 +2,6 @@
 
 /**
  * php .\test\zoop.test.php
- * http://logista.con/wp-content/plugins/digital-combo-pay-logista/test/zoop.test.php
  * 
  * https://dashboard.pagzoop.com/login
  * contato@digitalcombo.com.br
@@ -21,6 +20,8 @@ $zoop = new Zoop( [
     "intructions" => ["teste de instrução"],
     "logo" => "https://i.ibb.co/qnSvTQn/logo-digital-combo.png"
 ] );
+
+
 
 $zoop->first_name = "Bruno";
 $zoop->last_name = "Vieira";

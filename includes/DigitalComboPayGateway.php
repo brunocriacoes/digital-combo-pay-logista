@@ -1,9 +1,9 @@
 <?php
-class DigitalComboPayGatway  extends WC_Payment_Gateway
+class DigitalComboPayGateway  extends WC_Payment_Gateway
 {
      function __construct()
     {        
-        $this->id = 'DigitalComboPayGatway';
+        $this->id = 'DigitalComboPayGateway';
         $this->icon = DCP['LOGO'];
         $this->method_title = DCP['NAME_PLUGIN'];
         $this->method_description  = DCP['DESCRIPTION_PLUGIN'];
@@ -44,7 +44,8 @@ class DigitalComboPayGatway  extends WC_Payment_Gateway
     }
     public function payment_fields()
 	{
-		$modo_de_pagamento = $this->get_option('meios_de_pagamento');
+        $modo_de_pagamento = $this->get_option('meios_de_pagamento');
+        $dev = $this->get_option("dev");
 		include_once __DIR__ . "/checkout.php";
 	}
     public function set_meta_barcode( $code )
@@ -92,27 +93,29 @@ class DigitalComboPayGatway  extends WC_Payment_Gateway
     function process_payment( $order_id ) {
         global $woocommerce;
         $order = new WC_Order( $order_id );
-        $work =  $this->get_option("dev");
+        $work =  $this->get_option("dev") == "yes";
         $work = $work ? 'dev' : 'production';
         $seller_id = $work ? "6cf4bb1e78c6428786fc8fe6ddada3a6" : $this->get_option("seller_id");
         $zoop  = new Zoop( [
             "key_zpk" => DCP[$work]["KEY_ZPK"],
-            "mkt_id" => DCP[$work]["MKT_ID"] ,
+            "mkt_id" => DCP[$work]["MKT_ID"],
             "seller_id" => $seller_id,
             "expiration_date" => 3,
             "intructions" => ["teste de instrução"],
             "logo" => "https://i.ibb.co/qnSvTQn/logo-digital-combo.png"
         ] );
+        $total_cart = $order->get_total();
+        $zoop->amount = str_replace( '.', '', "$total_cart" ) ;
         $mes_ano_card = isset( $_POST["card_valid"] ) ? $_POST["card_valid"] : "00/00";
         $mes_ano_card_boom = explode( '/', $mes_ano_card );
         $zoop->mes_ano_card = $mes_ano_card;
         $zoop->expiration_month = $mes_ano_card_boom[0];
         $zoop->expiration_year = $mes_ano_card_boom[1];
-        $zoop->type_pagamento = isset( $_REQUEST["type_pagamento"] ) ? $_REQUEST["type_pagamento"] : 'boleto';
-        $zoop->card_number = isset( $_REQUEST["card_number"] ) ? $_REQUEST["card_number"] : '';
-        $zoop->security_code = isset( $_REQUEST["card_cvv"] ) ? $_REQUEST["card_cvv"] : '';
-        $zoop->holder_name = isset( $_REQUEST["card_name"] ) ? $_REQUEST["card_name"] : '';
-        $zoop->number_installments = isset( $_REQUEST["number_installments"] ) ? $_REQUEST["number_installments"] : 1;
+        $zoop->type_pagamento = isset( $_POST["type_pagamento"] ) ? $_POST["type_pagamento"] : 'boleto';
+        $zoop->card_number = isset( $_POST["card_number"] ) ? $_POST["card_number"] : '';
+        $zoop->security_code = isset( $_POST["card_cvv"] ) ? $_POST["card_cvv"] : '';
+        $zoop->holder_name = isset( $_POST["card_name"] ) ? $_POST["card_name"] : '';
+        $zoop->number_installments = isset( $_POST["number_installments"] ) ? $_POST["number_installments"] : 1;
         $zoop->cpf_cnpj = $order->get_meta('_billing_cpf');
         $zoop->first_name = $order->get_billing_first_name();
         $zoop->last_name = $order->get_billing_last_name();
@@ -123,13 +126,20 @@ class DigitalComboPayGatway  extends WC_Payment_Gateway
         $zoop->state = $order->get_billing_state();
         $zoop->postal_code = $order->get_billing_postcode();
         $zoop->split_rules = $this->get_split();
-        $pay = $zoop->pay();   
-        $order->update_status('on-hold', __( 'Awaiting cheque payment', 'woocommerce' ));    
-        $woocommerce->cart->empty_cart();
-        $redirect = !empty( $this->get_option("custon_slug_thank_you") ) ? $this->get_option("custon_slug_thank_you") : $this->get_return_url( $order );
+        $zoop->makerBuyer();
+        if( $zoop->type_pagamento == "card" ) :
+            $zoop->makerTokenCard();
+            $zoop->associatedCard();
+        endif;
+        $pay = $zoop->pay(); 
+        if( $pay["status"] ) :
+            $order->update_status('on-hold', __( 'Awaiting cheque payment', 'woocommerce' ));    
+            $woocommerce->cart->empty_cart();
+        endif;  
+        // $redirect = !empty( $this->get_option("custon_slug_thank_you") ) ? $this->get_option("custon_slug_thank_you") : $this->get_return_url( $order );
         return array(
-            'result' => $pay->status ? "success" : "error",
-            'redirect' => $redirect
+            'result' => $pay["status"] ? "success" : "erro",
+            'redirect' => $this->get_return_url( $order )
         );
     }
 }

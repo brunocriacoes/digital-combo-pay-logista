@@ -50,6 +50,7 @@ class Zoop
         $result = curl_exec($ch);
         curl_close($ch);
         $result = json_decode($result);
+        set_log( "RESPONSE $full_url BODY " . json_encode($result) );
         return $result;
     }
     function makerBuyer()

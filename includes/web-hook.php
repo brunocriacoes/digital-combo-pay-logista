@@ -6,6 +6,7 @@ add_action('woocommerce_api_digitalcombo', function () {
     $table_perfixed = $wpdb->prefix . 'comments';
     $request = file_get_contents('php://input');
     $request = json_decode($request);
+    set_log( "REQUEST WEB HOOK " . json_encode($request) );
     $request = [
         "type" => $request->type,
         "id"   => $request->payload->object->payment_method->id

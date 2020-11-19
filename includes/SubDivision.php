@@ -2,7 +2,7 @@
 
 add_action( 'woocommerce_before_add_to_cart_form', function() {
     global $product;
-    $dcp = new DigitalComboPayGatway();
+    $dcp = new DigitalComboPayGateway();
     $price = $product->price;
     $max_number_division = $dcp->get_option("parcelar_em");
     $min_amout_division = $dcp->get_option("min_valor_por_parcela");

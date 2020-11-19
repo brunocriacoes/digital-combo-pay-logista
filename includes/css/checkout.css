@@ -71,7 +71,7 @@
 }
 .escolha_tipo {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     grid-gap: 20px;
 }
 .escolha_tipo label {
@@ -94,6 +94,28 @@
 .escolha_tipo input:checked + label {
     border: 3px solid #FF6B00;
     filter: opacity(1);
+}
+#is_dev {
+    display: block;
+    width: 100vw;
+    line-height: 40px;
+    background-color: #111;
+    color: #FF6B00;
+    font-size: 13px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    animation-name: pisca;
+    animation-iteration-count: infinite;
+    animation-duration: 1s ;
+    transition: all 1s ease;
+    text-transform: uppercase;
+    font-family: monospace;
+}
+@keyframes pisca {
+    from { background-color: black; }
+    to { background-color: #111; }
 }
 @media screen and ( max-width: 800px )
 {

@@ -33,9 +33,9 @@ return [
         "type"    => "select",
         "default" => "cartao_credito_e_boleto",
         "options" => [
-            "cartao_credito_e_boleto" => "Cartão Crédito e Boleto",
-            "cartao_de_credito" => "Somente via Cartão Crédito",
-            "boleto" => "Somente via Boleto",
+            "valid_card_boleto" => "Cartão Crédito e Boleto",
+            "valid_card" => "Somente via Cartão Crédito",
+            "valid_boleto" => "Somente via Boleto",
         ]
     ],
     "dias_para_vencer_boleto" => [
