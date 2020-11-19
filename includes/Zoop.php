@@ -19,14 +19,19 @@ class Zoop
         $this->intructions = $params["intructions"];
         $this->logo = $params["logo"];
         $this->split_rules = [];
+        $this->customerId = null;
+        $this->associated_card_id = null;
+        $this->token_card_id = null;
     }
     public function post($path,  $params = [], $is_json = false)
     {
         $params = $is_json ? http_build_query($params) : json_encode($params);
+        $full_url = self::URL_API . "/v1/marketplaces/" . $this->mkt_id . $path;
+        set_log( "POST $full_url PARANS $params" );
         $defaults = [
             CURLOPT_POST           => true,
             CURLOPT_HEADER         => false,
-            CURLOPT_URL            => self::URL_API . "/v1/marketplaces/" . $this->mkt_id . $path,
+            CURLOPT_URL            => $full_url,
             CURLOPT_FRESH_CONNECT  => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FORBID_REUSE   => true,
@@ -68,12 +73,20 @@ class Zoop
                     "postal_code" => $this->address_postal_code,
                     "country_code" => "BR"
                 ]
+            ], 
+            true
+        );
+        $request = (array) $request;
+        if( empty( $request["error"] ) ) :
+            $this->customerId = $request["id"];
+        endif;
+        return array_merge( 
+            $request,
+            [
+                "status" => empty( $request["error"] ) ? true : false,
+                "id" => $request["id"]
             ]
         );
-        return [
-            "status" => $request->status == 'active' ? true : false,
-            "id" => $request->id
-        ];
     }
     public function makerTokenCard()
     {
@@ -85,26 +98,42 @@ class Zoop
                 "expiration_year" => $this->expiration_year,
                 "card_number" => $this->card_number,
                 "security_code" => $this->security_code
+            ],
+            true
+        );
+        $request = (array) $request;
+        if( empty( $request["error"] ) ) :
+            $this->token_card_id = $request["id"];
+        endif;
+        return array_merge(
+            $request,
+            [
+                "status" => empty( $request["error"] ) ? true : false,
+                "id" => empty( $request["error"] ) ? $request["id"] : null
             ]
         );
-        return [
-            "status" => null,
-            "id" => null
-        ];
     }
     public function associatedCard()
     {
         $request = $this->post(
             "/cards",
             [
-                "token" => $this->makerTokenCard()->id,
-                "customer" => $this->makerBuyer()->id
+                "token" => $this->token_card_id,
+                "customer" => $this->customerId
+            ],
+            true
+        );
+        $request = (array) $request;
+        if( empty( $request["error"] ) ) :
+            $this->associated_card_id = $request["id"];
+        endif;
+        return array_merge(
+            $request,
+            [
+                "status" => empty( $request["error"] ) ? true : false,
+                "id" => empty( $request["error"] ) ? $request["id"] : null
             ]
         );
-        return [
-            "status" => null,
-            "id" => null
-        ];
     }
     public function cardPay()
     {
@@ -116,14 +145,23 @@ class Zoop
                 "description" => "venda ecommerce",
                 "payment_type" => "credit",
                 "on_behalf_of" => $this->seller_id,
-                "reference_id" => $this->order_id,
+                "reference_id" => $this->associated_card_id,
+                "customer" => $this->customerId,
                 "split_rules" => $this->split_rules
+            ],
+            true
+        );
+        $request = (array) $request;
+        if ( empty( $request["error"] ) ) :
+            $this->transaction_id = $request["id"];
+        endif;
+        return array_merge(
+            $request,
+            [
+                "status" => empty( $request["error"] ) ? true : false,
+                "id" => empty( $request["error"] ) ? $request["id"] : null
             ]
         );
-        return [
-            "status" => null,
-            "id" => null
-        ];
     }
     public function boletoPay()
     {
@@ -135,34 +173,30 @@ class Zoop
                 "description" => "venda ecommerce",
                 "payment_type" => "boleto",
                 "on_behalf_of" => $this->seller_id,
-                "constumerId" => $this->associatedCard()->id,
+                "customer" => $this->customerId,
                 "reference_id" => $this->order_id,
                 "split_rules" => $this->split_rules,
                 "logo" => $this->logo,
                 "payment_method" => [
                     "expiration_date"   => $this->expiration_date,
                     "body_instructions" => $this->intructions
-                ],
-                "first_name"  => $this->first_name,
-                "last_name"   => $this->last_name,
-                "taxpayer_id" => $this->cpf_cnpj,
-                "email"       => $this->email,
-                "address"     => [
-                    "line1"        => $this->line1,
-                    "line2"        => $this->line2,
-                    "neighborhood" => $this->bairro,
-                    "city"         => $this->city,
-                    "state"        => $this->state,
-                    "postal_code"  => $this->postal_code,
-                    "country_code" => "BR"
-                ],
-                "customerID" => $this->associatedCard()->id,
+                ]                
+            ],
+            true
+        );
+        $request = (array) $request;
+        if ( empty( $request["error"] ) ) :
+            $this->transaction_id = $request["id"];
+        endif;
+        return array_merge(
+            $request,
+            [
+                "id" => empty( $request["error"] ) ? $request["id"] : null,
+                "status" => empty( $request["error"] ) ? true : false,
+                "barcode" => empty( $request["error"] ) ? $request["payment_method"]->barcode : null ,
+                "url" => empty( $request["error"] ) ? $request["payment_method"]->url : null
             ]
         );
-        return [
-            "status" => null,
-            "id" => null
-        ];
     }
     function pay()
     {
