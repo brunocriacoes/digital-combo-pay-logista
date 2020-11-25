@@ -25,3 +25,6 @@ https://www.businessbloomer.com/woocommerce-visual-hook-guide-single-product-pag
 
 hooks checkout
 https://www.businessbloomer.com/woocommerce-visual-hook-guide-checkout-page/
+
+debug WP
+https://wordpress.org/support/article/debugging-in-wordpress/

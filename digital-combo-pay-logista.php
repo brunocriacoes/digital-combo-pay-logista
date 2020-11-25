@@ -25,17 +25,19 @@ include_once __DIR__ . "/includes/evendas.php";
 include_once __DIR__ . "/includes/checkout-custon-fields.php"; 
 include_once __DIR__ . "/includes/thank-your-custon.php"; 
 include_once __DIR__ . "/includes/web-hook.php"; 
-include_once __DIR__ . "/includes/email-custon.php"; 
+// include_once __DIR__ . "/includes/email-custon.php"; 
 include_once __DIR__ . "/includes/Zoop.php"; 
 
 add_action( 'plugins_loaded', function() {
     include_once __DIR__ . "/includes/DigitalComboPayGateway.php"; 
 } );
 
-
 add_filter( 'woocommerce_payment_gateways', function( $methods ) {
     $methods[] = 'DigitalComboPayGateway'; 
     return $methods;
 } );
 
-wp_enqueue_style( 'dcp-checkout-css', plugin_dir_url( __FILE__ ) . '/includes/css/checkout.css');
+add_action( 'wp_enqueue_scripts', function() {
+    wp_register_style( 'dcp-checkout-css', plugin_dir_url( __FILE__ ) . '/includes/css/checkout.css');
+    wp_enqueue_style('dcp-checkout-css');
+} );

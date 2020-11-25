@@ -19,6 +19,13 @@ add_action( 'woocommerce_before_add_to_cart_form', function() {
     include __DIR__ . "/division-single.php";
 } );
 
-wp_enqueue_script( 'dcp-division-js', plugin_dir_url( __FILE__ ) . '/js/division.js', [], false, true);
-wp_enqueue_style( 'dcp-division-css', plugin_dir_url( __FILE__ ) . '/css/division.css');
 
+add_action( 'wp_enqueue_scripts', function() {
+    
+    wp_register_script( 'dcp-division-js', plugin_dir_url( __FILE__ ) . '/js/division.js', [], false, true);
+    wp_register_style( 'dcp-division-css', plugin_dir_url( __FILE__ ) . '/css/division.css');
+    
+    wp_enqueue_style('dcp-division-css');
+    wp_enqueue_script('dcp-division-js');
+
+} );

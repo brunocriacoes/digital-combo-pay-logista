@@ -25,9 +25,9 @@ class Zoop
     }
     public function post($path,  $params = [], $is_json = false)
     {
-        $params = $is_json ? http_build_query($params) : json_encode($params);
         $full_url = self::URL_API . "/v1/marketplaces/" . $this->mkt_id . $path;
-        set_log( "POST $full_url PARANS $params" );
+        set_log( "POST $full_url PARANS ". json_encode( $params ) );
+        $params = $is_json ? http_build_query($params) : json_encode($params);
         $defaults = [
             CURLOPT_POST           => true,
             CURLOPT_HEADER         => false,
@@ -148,7 +148,10 @@ class Zoop
                 "on_behalf_of" => $this->seller_id,
                 "reference_id" => $this->associated_card_id,
                 "customer" => $this->customerId,
-                "split_rules" => $this->split_rules
+                "split_rules" => $this->split_rules,
+                "installment_plan" => [
+                    "number_installments" => $this->parcela
+                ]
             ],
             true
         );

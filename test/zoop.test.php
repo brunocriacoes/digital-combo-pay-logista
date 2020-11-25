@@ -39,13 +39,14 @@ $zoop->address_postal_code = "06786270";
 $zoop->address_country_code = "BR";
 
 $zoop->order_id = 1;
-$zoop->amount = 300;
+$zoop->amount = "300";
 
 $zoop->holder_name = "Jose Luis da Silva";
 $zoop->expiration_month = "09";
-$zoop->expiration_year = "2030";
+$zoop->expiration_year = "30";
 $zoop->card_number = "4539003370725497";
 $zoop->security_code = "123";
+$zoop->parcela = 12;
 
 $makerBuyer = $zoop->makerBuyer();
 echo "Maker Buyer: ";
