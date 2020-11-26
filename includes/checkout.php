@@ -1,7 +1,7 @@
 <?php
-
 $option_play = require __DIR__ . "/options-pay.php";
-
+global $woocommerce;
+$parcelas = get_division( WC()->cart->total );
 ?>
 <div class="card_form">
     <div>
@@ -58,9 +58,9 @@ $option_play = require __DIR__ . "/options-pay.php";
         <div>
             <label for="">Parcelar em </label>
             <select name="number_installments">
-                <option value="1">1x a vistas de R$ 559.80</option>
-                <option value="2">2x de R$ 225,00 Total R$ 565.80 </option>
-                <option value="3">2x de R$ 178,00 Total R$ 565.80</option>
+                <?php foreach( $parcelas as $parcela ) : ?>
+                    <option value="<?= $parcela["id"] ?>"><?= $parcela["text"] ?></option>
+                <?php endforeach; ?>
             </select>
         </div>
     </div>

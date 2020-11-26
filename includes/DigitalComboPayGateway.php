@@ -14,6 +14,10 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
         $this->order_id = null;
         $this->payment_type = "boleto";
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
+        add_filter( 'woocommerce_order_button_text', function() {
+            $text_button = $this->get_option('text_botao_finalizar');
+            return !empty( $text_button ) ? $text_button : 'Finalizar';
+        } );
     }
     public function get_split()
     {
@@ -82,16 +86,16 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
         $user_id =  get_current_user_id();
         return update_post_meta($user_id, "customerID_{$this->payment_type}", $token);
     }
-    public function apply_dicounts( $amount, $porcetage, &$taxa )
+    public function apply_dicounts($amount, $porcetage, &$taxa)
     {
-        
+
         $porcetage = $this->get_option("em_$porcetage");
-        if( !empty( $porcetage ) ) :
+        if (!empty($porcetage)) :
             $amount_plus_fee = $amount + ($amount / 100 * $porcetage);
             $fee =  $amount_plus_fee - $amount;
-            $fee = number_format( $fee, 2, '.', ',' );
+            $fee = number_format($fee, 2, '.', ',');
             $taxa = $fee;
-            $amount = number_format( $amount_plus_fee, 2, '.', ',' );
+            $amount = number_format($amount_plus_fee, 2, '.', ',');
         endif;
         return $amount;
     }
@@ -99,10 +103,7 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
     {
         global $woocommerce;
         $order = new WC_Order($order_id);
-
-
-
-
+        $this->order_id = $order_id;
 
         $work =  $this->get_option("dev") == "yes";
         $work = $work ? 'dev' : 'production';
@@ -115,7 +116,6 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
             "intructions" => ["teste de instrução"],
             "logo" => "https://i.ibb.co/qnSvTQn/logo-digital-combo.png"
         ]);
-        
 
         $mes_ano_card = isset($_POST["card_valid"]) ? $_POST["card_valid"] : "00/00";
         $mes_ano_card_boom = explode('/', $mes_ano_card);
@@ -123,31 +123,31 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
         $zoop->expiration_month = $mes_ano_card_boom[0];
         $zoop->expiration_year = $mes_ano_card_boom[1];
         $zoop->type_pagamento = isset($_POST["type_pagamento"]) ? $_POST["type_pagamento"] : 'boleto';
-        $zoop->card_number = isset($_POST["card_number"]) ? str_replace( ' ', '', $_POST["card_number"])  : '';
+        $zoop->card_number = isset($_POST["card_number"]) ? str_replace(' ', '', $_POST["card_number"])  : '';
         $zoop->security_code = isset($_POST["card_cvv"]) ? $_POST["card_cvv"] : '';
         $zoop->holder_name = isset($_POST["card_name"]) ? $_POST["card_name"] : '';
         $zoop->parcela = isset($_POST["number_installments"]) ? $_POST["number_installments"] : '1';
 
         $total_cart = $order->get_total();
         $taxa = 0;
-        $total_cart = $this->apply_dicounts( $total_cart, $zoop->parcela, $taxa );
+        $total_cart = $this->apply_dicounts($total_cart, $zoop->parcela, $taxa);
         $zoop->amount = str_replace('.', '', "$total_cart");
 
         $country_code = $order->get_shipping_country();
         $calculate_tax_for = array(
-            'country' => $country_code, 
-            'state' => '', 
-            'postcode' => '', 
+            'country' => $country_code,
+            'state' => '',
+            'postcode' => '',
             'city' => ''
         );
         $item_fee = new WC_Order_Item_Fee();
-        $item_fee->set_name( "Taxa por Parcelamento" ); 
-        $item_fee->set_amount( $taxa ); 
-        $item_fee->set_tax_class( '' ); 
-        $item_fee->set_tax_status( 'Taxa por Parcelamento' ); 
-        $item_fee->set_total( $taxa ); 
-        $item_fee->calculate_taxes( $calculate_tax_for );
-        $order->add_item( $item_fee );
+        $item_fee->set_name("Taxa por Parcelamento");
+        $item_fee->set_amount($taxa);
+        $item_fee->set_tax_class('');
+        $item_fee->set_tax_status('Taxa por Parcelamento');
+        $item_fee->set_total($taxa);
+        $item_fee->calculate_taxes($calculate_tax_for);
+        $order->add_item($item_fee);
 
         $zoop->number_installments = isset($_POST["number_installments"]) ? $_POST["number_installments"] : 1;
         $zoop->cpf_cnpj = $order->get_meta('_billing_cpf');
@@ -168,19 +168,26 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
         $zoop->birthdate = "";
         $zoop->address_complement = "";
         $res = $zoop->makerBuyer();
+        $this->set_meta_type($zoop->type_pagamento);
         if ($zoop->type_pagamento == "card") :
             $zoop->makerTokenCard();
             $zoop->associatedCard();
         endif;
         $pay = $zoop->pay();
+        $this->set_meta_ref($pay["id"]);
+        if ($zoop->type_pagamento == "boleto") :
+            $this->set_meta_barcode($pay["barcode"]);
+            $this->set_meta_boleto($pay["url"]);
+        endif;
         if ($pay["status"]) :
             $order->calculate_totals();
             $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
             $woocommerce->cart->empty_cart();
         endif;
+        $redirect = !empty($this->get_option("custon_slug_thank_you")) ? $this->get_option("custon_slug_thank_you") : $this->get_return_url($order);
         return array(
             'result' => $pay["status"] ? "success" : "error",
-            'redirect' => $this->get_return_url($order)
+            'redirect' => $redirect
         );
     }
 }

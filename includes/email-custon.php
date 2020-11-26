@@ -1,8 +1,9 @@
 <?php
 
 /**
- * http://loja.con/wp-admin/admin-ajax.php?action=previewemail
+ * http://loja.con/wp-admin/admin-ajax.php?action=previewemail&id_order=68
  */
+
 
 add_action('wp_ajax_previewemail', function () {
     global $order;
@@ -17,15 +18,16 @@ add_action('wp_ajax_previewemail', function () {
 });
 
 add_action('woocommerce_email_before_order_table', function ($order) {
-    $more        = new DCP_Order($order->id);
-    $barcode     =  $more->get_barcode();
-    $boleto_link = $more->get_boleto();
-    if ($more->get_type() == "Boleto") :
+    $type_payment = get_post_meta($order->id, 'pagamento_metodo', true);
+    $barcode = get_post_meta($order->id, 'ORDER_BARCODE', true);
+    $link = get_post_meta($order->id, 'ORDER_BOLETO', true);
+
+    if ($type_payment == "boleto") :
         echo "
             <center>
                 <p>baixe agora seu boleto</p>
                 <a 
-                    href=\"{$boleto_link}\"
+                    href=\"{$link}\"
                     style=\"
                         border: 3px solid #666;
                         display: block;

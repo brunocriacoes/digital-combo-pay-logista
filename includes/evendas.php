@@ -36,7 +36,7 @@ function get_payment_method($request)
     });
     $filtro = array_values($filtro);
     $filtro = $filtro[0];
-    return $filtro->value == "Boleto" ?  'digital_combo_pay_boleto' : 'digital_combo_pay_cartao';
+    return $filtro->value == "boleto" ?  'digital_combo_pay_boleto' : 'digital_combo_pay_cartao';
 }
 
 function adapter_get_meta($flag, $metas)

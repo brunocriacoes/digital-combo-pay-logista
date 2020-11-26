@@ -1,21 +1,36 @@
 <?php
 
+function get_division( $amount )
+{
+    $dcp = new DigitalComboPayGateway();
+    $max_number_division = intval( $dcp->get_option("parcelar_em") );
+    $min_amount_division = intval( $dcp->get_option("min_valor_por_parcela") );
+    $divisions = [
+        [
+            "id" => 1,
+            "text" => "1x de $amount",
+        ]
+    ];
+    for( $i = 2; $i <= $max_number_division; $i++ ):
+        $porcetage = $dcp->get_option("em_{$i}");
+        $amount_plus_fee = $amount + ($amount / 100 * $porcetage);
+        $division = $amount_plus_fee / $i;
+        if(  $division > $min_amount_division ) :
+            $division = number_format( $division, 2, ',', '.' );
+            $amount_plus_fee = number_format( $amount_plus_fee, 2, ',', '.' );
+            $divisions[] = [
+                "id" => $i,
+                "text" => "{$i}x de R$ {$division} TOTAL R$ {$amount_plus_fee}"
+            ];
+        endif;
+    endfor;
+    return $divisions;
+}
+
+
 add_action( 'woocommerce_before_add_to_cart_form', function() {
     global $product;
-    $dcp = new DigitalComboPayGateway();
-    $price = $product->price;
-    $max_number_division = $dcp->get_option("parcelar_em");
-    $min_amout_division = $dcp->get_option("min_valor_por_parcela");
-    $division = number_format( ( $price / $max_number_division ), 2, ',', '.' );
-    for( $em = 1; $em <= $max_number_division; $em++ ) :
-        $pctm = (int) $dcp->get_option("em_$em");
-        $juros =  number_format( ( $price - $price * $pctm / 100.0), 2, ',', '.' );
-        $parcelas[] = [
-            "vezes" => $em,
-            "sub_total" => number_format( ( $price / $em ), 2, ',', '.' ),
-            "total" => $juros
-        ];
-    endfor;
+    $parcelas = get_division( $product->price );
     include __DIR__ . "/division-single.php";
 } );
 
