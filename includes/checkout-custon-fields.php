@@ -1,7 +1,7 @@
 <?php
 
 add_filter( 'woocommerce_checkout_fields' , function( $fields ) {
-    $fields['billing']['billing_bairro'] = [
+    $fields['billing']['billing_neighborhood'] = [
         'type'        => 'text',
         'label'       => "bairro",
         'placeholder' => "Digite aqui seu bairro",

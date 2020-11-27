@@ -160,7 +160,7 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
         $zoop->address_state = $order->get_billing_state();
         $zoop->address_postal_code = $order->get_billing_postcode();
         $zoop->address_country_code = "BR";
-        $zoop->address_neighborhood = $order->get_meta('_billing_bairro');
+        $zoop->address_neighborhood = $order->get_meta('_billing_neighborhood');
         $zoop->split_rules = $this->get_split();
         $zoop->order_id = $order_id;
         $zoop->user_id = get_current_user_id();
