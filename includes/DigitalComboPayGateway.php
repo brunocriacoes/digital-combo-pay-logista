@@ -107,7 +107,7 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
 
         $work =  $this->get_option("dev") == "yes";
         $work = $work ? 'dev' : 'production';
-        $seller_id = $work ? "6cf4bb1e78c6428786fc8fe6ddada3a6" : $this->get_option("seller_id");
+        $seller_id = $work == "dev" ? "6cf4bb1e78c6428786fc8fe6ddada3a6" : $this->get_option("seller_id");
         $zoop  = new Zoop([
             "key_zpk" => DCP[$work]["KEY_ZPK"],
             "mkt_id" => DCP[$work]["MKT_ID"],
