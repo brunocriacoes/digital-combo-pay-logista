@@ -26,7 +26,7 @@ class Zoop
     public function post($path,  $params = [], $is_json = false)
     {
         $full_url = self::URL_API . "/v1/marketplaces/" . $this->mkt_id . $path;
-        set_log( "POST $full_url PARANS ". json_encode( $params ) );
+        set_log( "POST $path -> ". json_encode( $params ) );
         $params = $is_json ? http_build_query($params) : json_encode($params);
         $defaults = [
             CURLOPT_POST           => true,
@@ -50,7 +50,7 @@ class Zoop
         $result = curl_exec($ch);
         curl_close($ch);
         $result = json_decode($result);
-        set_log( "RESPONSE $full_url BODY " . json_encode($result) );
+        set_log( "RES $path -> " . json_encode($result) );
         return $result;
     }
     function makerBuyer()
@@ -195,7 +195,7 @@ class Zoop
         return array_merge(
             $request,
             [
-                "id" => empty( $request["error"] ) ? $request["id"] : null,
+                "id" => empty( $request["error"] ) ? $request["payment_method"]->id : null,
                 "status" => empty( $request["error"] ) ? true : false,
                 "barcode" => empty( $request["error"] ) ? $request["payment_method"]->barcode : null ,
                 "url" => empty( $request["error"] ) ? $request["payment_method"]->url : null

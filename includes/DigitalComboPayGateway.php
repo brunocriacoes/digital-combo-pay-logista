@@ -174,7 +174,7 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
             $zoop->associatedCard();
         endif;
         $pay = $zoop->pay();
-        $this->set_meta_ref($pay["id"]);
+        $this->set_meta_ref($pay["payment_method"]->id);
         if ($zoop->type_pagamento == "boleto") :
             $this->set_meta_barcode($pay["barcode"]);
             $this->set_meta_boleto($pay["url"]);
