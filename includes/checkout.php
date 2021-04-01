@@ -27,7 +27,7 @@ $parcelas = get_division( WC()->cart->total );
         <div class="card__valid_cvv">
             <div>
                 <span>VALID</span>
-                <b id="vValid">02/29</b>
+                <b id="vValid">02/2020</b>
             </div>
             <div>
                 <span>CVV</span>
@@ -48,7 +48,7 @@ $parcelas = get_division( WC()->cart->total );
         <div class="card_grid_cvv_valid">
             <div>
                 <label for="">Validade<b>*</b></label>
-                <input type="text" name="card_valid" -value="12/30" id="iValid" placeholder="MM/AA" oninput="globalThis.card_valid()" require>
+                <input type="text" name="card_valid" -value="12/30" id="iValid" placeholder="MM/AAAA" oninput="globalThis.card_valid()" require>
             </div>
             <div>
                 <label for="">CVV<b>*</b></label>
@@ -100,12 +100,12 @@ $parcelas = get_division( WC()->cart->total );
         let $vValid = document.querySelector("#vValid")
         let mascara = $iValid.value
         mascara = mascara.replace(/\D/gi, '')
-        mascara = mascara.replace(/(\d{2})(\d{2})(.*)/gi, '$1/$2')
+        mascara = mascara.replace(/(\d{2})(\d{4})(.*)/gi, '$1/$2')
         if (mascara.length > 0) {
             $vValid.innerHTML = mascara
             $iValid.value = mascara
         } else {
-            $vValid.innerHTML = "02/29"
+            $vValid.innerHTML = "02/2020"
         }
     }
     globalThis.card_cvv = () => {
