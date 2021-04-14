@@ -185,7 +185,7 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
             $woocommerce->cart->empty_cart();
         endif;
         $redirect = !empty($this->get_option("custon_slug_thank_you")) ? $this->get_option("custon_slug_thank_you") : $this->get_return_url($order);
-        if( strlen( $_POST["card_valid"] ?? '' ) != 7 ) {
+        if( strlen( $_POST["card_valid"] ?? '' ) != 7 && $_POST["type_pagamento"] != 'boleto' ) {
 			$pay["status"] = false;
 		}
         return array(
