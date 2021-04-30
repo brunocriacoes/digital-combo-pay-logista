@@ -27,6 +27,7 @@ include_once __DIR__ . "/includes/thank-your-custon.php";
 include_once __DIR__ . "/includes/web-hook.php"; 
 include_once __DIR__ . "/includes/email-custon.php"; 
 include_once __DIR__ . "/includes/Zoop.php"; 
+include_once __DIR__ . "/includes/coluna-tipo-pagamento.php"; 
 
 add_action( 'plugins_loaded', function() {
     include_once __DIR__ . "/includes/DigitalComboPayGateway.php"; 

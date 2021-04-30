@@ -118,10 +118,11 @@ class DigitalComboPayGateway  extends WC_Payment_Gateway
         ]);
 
         $mes_ano_card = isset($_POST["card_valid"]) ? $_POST["card_valid"] : "00/00";
-        $mes_ano_card_boom = explode('/', $mes_ano_card);
+        $mes_ano_card_boom = str_replace('/', '', $mes_ano_card );
+        // $mes_ano_card_boom = explode('/', $mes_ano_card);
         $zoop->mes_ano_card = $mes_ano_card;
-        $zoop->expiration_month = $mes_ano_card_boom[0];
-        $zoop->expiration_year = $mes_ano_card_boom[1];
+        $zoop->expiration_month = substr( $mes_ano_card_boom, 0, 2 );
+        $zoop->expiration_year = str_pad(substr( $mes_ano_card_boom, 2, 4 ) , 4 , '20' , STR_PAD_LEFT) ;
         $zoop->type_pagamento = isset($_POST["type_pagamento"]) ? $_POST["type_pagamento"] : 'boleto';
         $zoop->card_number = isset($_POST["card_number"]) ? str_replace(' ', '', $_POST["card_number"])  : '';
         $zoop->security_code = isset($_POST["card_cvv"]) ? $_POST["card_cvv"] : '';
