@@ -1,5 +1,0 @@
-A non-numeric value encountered in /home2/bethania/public_html/wp-content/plugins/digital-combo-pay-logista-main/includes/SubDivision.php on line 16
-PHP Fatal error:  Uncaught Error: Call to a member function update_status() on null in /home2/bethania/public_html/wp-content/plugins/digital-combo-pay-logista-main/includes/web-hook.php:29
-/home2/bethania/public_html/wp-includes/ in /home2/bethania/public_html/wp-content/plugins/digital-combo-pay-logista-main/includes/web-hook.php on line 29
-PHP Fatal error:  Uncaught Error: Call to a member function update_status() on null in /home2/bethania/public_html/wp-content/plugins/digital-combo-pay-logista-main/includes/web-hook.php:42
-/home2/bethania/public_html/wp-includes/ in /home2/bethania/public_html/wp-content/plugins/digital-combo-pay-logista-main/includes/web-hook.php on line 42
