@@ -21,8 +21,13 @@ add_action('manage_shop_order_posts_custom_column', function ($col_name) {
     $tipo_pagamento = get_post_meta( $ID, 'pagamento_metodo', true);
     $tipo_pagamento = strlen($tipo_pagamento) > 3 ? $tipo_pagamento : 'undefined';
     $tipo_pagamento = type_payment($tipo_pagamento);
+    $link = get_post_meta( $ID, 'ORDER_BOLETO', true);
 	if ('type_payment' == $col_name) :
-		echo " {$tipo_pagamento}";
+        if( $tipo_pagamento == 'Boleto'):
+            echo "{$tipo_pagamento} <a href=\"{$link}\" target=\"_blank\"> LINK </a>";
+        else:
+            echo " {$tipo_pagamento}";
+        endif;
 	endif;
 });
 
