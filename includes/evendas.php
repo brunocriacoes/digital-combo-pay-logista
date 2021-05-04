@@ -26,6 +26,7 @@ function integracao_evendas($param)
     curl_setopt_array($con, $defaults);
     $ex = curl_exec($con);
     curl_close($con);
+    file_put_contents( __DIR__ . "/../.evendas", json_encode( $request ) );
     // return $ex;
 }
 
@@ -67,8 +68,7 @@ function adapter_resquest_webhook_wc($request)
             "phone"      => $request->billing->phone,
         ],
         "payment_method" =>  get_payment_method($request),
-        "meta_data" => array_values(array_filter($request->meta_data, function ($meta) {
-            return in_array($meta->key, ['ORDER_BARCODE', 'ORDER_BOLETO', 'ORDER_REF', 'pagamento_metodo']);
-        }))
+        "meta_data" => $request->meta_data
     ];
 }
+

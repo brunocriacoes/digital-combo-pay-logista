@@ -1,0 +1,56 @@
+{
+    "id": 96,
+    "number": 96,
+    "status": "completed",
+    "date_created": "2021-05-03T09:52:43",
+    "total": "279.90",
+    "barcode": null,
+    "boleto_link": null,
+    "ref": "254587e95c40477c93ba198bc150b756",
+    "billing": {
+        "first_name": "Bruno",
+        "last_name": "Vieira",
+        "email": "br.rafael@outlook.com",
+        "phone": "(82) 99977-6698"
+    },
+    "payment_method": "digital_combo_pay_cartao",
+    "meta_data": [
+        {
+            "id": 3105,
+            "key": "_billing_cpf",
+            "value": "929.919.200-68"
+        },
+        {
+            "id": 3106,
+            "key": "_billing_neighborhood",
+            "value": "bairro"
+        },
+        {
+            "id": 3107,
+            "key": "is_vat_exempt",
+            "value": "no"
+        },
+        {
+            "id": 3108,
+            "key": "pagamento_metodo",
+            "value": "card"
+        },
+        {
+            "id": 3109,
+            "key": "ORDER_REF",
+            "value": "254587e95c40477c93ba198bc150b756"
+        },
+        {
+            "id": 3164,
+            "key": "_wc_any_shipping_notify_tracking_code",
+            "value": {
+                "PM898597595BR": "0"
+            }
+        },
+        {
+            "id": 3171,
+            "key": "_correios_tracking_code",
+            "value": "222222222222"
+        }
+    ]
+}
